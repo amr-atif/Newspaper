@@ -27,7 +27,7 @@ class CommentGet(LoginRequiredMixin, DetailView):
 class CommentPost(SingleObjectMixin, FormView):  # new
     model = Article
     form_class = CommentForm
-    template_name = "article_detail.html"
+    template_name = 'article_detail'
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -36,12 +36,13 @@ class CommentPost(SingleObjectMixin, FormView):  # new
     def form_valid(self, form):
         comment = form.save(commit=False)
         comment.article = self.object
+        comment.author = self.request.user
         comment.save()
         return super().form_valid(form)
 
     def get_success_url(self):
         article = self.get_object()
-        return reverse("article_detail", kwargs={"pk": article.pk})
+        return reverse('article_detail', kwargs={"pk": article.pk})
 
 
 class ArticleDetailView(LoginRequiredMixin, View):  # new
